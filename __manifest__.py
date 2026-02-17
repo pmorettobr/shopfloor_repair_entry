@@ -7,25 +7,23 @@
     'description': """
         Fluxo simplificado para chão de fábrica (Community Edition):
         - Registro de entrada de equipamentos de clientes
-        - Checklist de recebimento (estado, avarias, acessórios)
+        - Checklist de recebimento
         - Geração automática de OP com Tipo = Reparo
-        - Roteiro Padrão de Operações (como registro)
-        - Rastreabilidade completa por número de série
         - COMPATÍVEL COM ODOO 16 COMMUNITY
     """,
     'author': 'Paulo Moretto',
     'license': 'LGPL-3',
     'depends': [
-        'mrp',              # ✅ Community
-        'mrp_production_type',  # ✅ Seu módulo 2
-        'stock',            # ✅ Community
+        'mrp',
+        'mrp_production_type',
+        'stock',
     ],
     'data': [
         'security/ir.model.access.csv',
         'data/repair_standard_operations_data.xml',
         'views/repair_standard_operations_views.xml',
         'views/equipment_entry_views.xml',
-        'views/mrp_production_inherit_views.xml',
+        # 'views/mrp_production_inherit_views.xml',  # REMOVIDO TEMPORARIAMENTE
     ],
     'installable': True,
     'application': False,
