@@ -44,6 +44,9 @@ class EquipmentEntry(models.Model):
         string='Roteiro Padrão',
         default=lambda self: self.env['repair.standard.route'].search([('active', '=', True)], limit=1)
     )
+    
+    # ========== ROTEIRO COPIADO (para consulta) ==========
+    operations_note = fields.Text(string='Operações do Reparo', readonly=True)
 
     def action_confirm_entry(self):
         """Confirma a entrada e gera a OP de reparo automaticamente"""
@@ -54,7 +57,10 @@ class EquipmentEntry(models.Model):
             if entry.mrp_production_id:
                 raise UserError(_('Já existe uma Ordem de Produção vinculada a esta entrada.'))
             
-            # Cria a OP de Reparo
+            # Gera o texto das operações para armazenar na entrada
+            operations_text = entry._build_operations_note()
+            
+            # Cria a OP de Reparo - APENAS CAMPOS NATIVOS DO COMMUNITY
             production_vals = {
                 'product_id': entry._get_or_create_repair_product().id,
                 'product_qty': 1,
@@ -62,21 +68,23 @@ class EquipmentEntry(models.Model):
                 'origin': f'Entrada: {entry.id}',
                 'production_type': 'repair',  # Módulo 2
                 'equipment_entry_id': entry.id,
-                # 'partner_id': entry.partner_id.id,  # ❌ REMOVIDO - Não existe no Community
-                'note': entry._build_operations_note(),
+                # ❌ REMOVIDO: partner_id (não existe no Community)
+                # ❌ REMOVIDO: note (não existe no Community)
             }
             
             production = self.env['mrp.production'].create(production_vals)
             
+            # Atualiza a entrada com o vínculo e o roteiro
             entry.write({
                 'mrp_production_id': production.id,
-                'state': 'confirmed'
+                'state': 'confirmed',
+                'operations_note': operations_text,
             })
         
         return True
 
     def _build_operations_note(self):
-        """Cria uma nota com as operações do roteiro (Community)"""
+        """Cria uma nota com as operações do roteiro"""
         self.ensure_one()
         if not self.standard_route_id or not self.standard_route_id.operation_ids:
             return ''
