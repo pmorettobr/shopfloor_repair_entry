@@ -7,10 +7,25 @@
         <field name="arch" type="xml">
             <form string="Entrada de Equipamento">
                 <header>
-                    <button name="action_confirm_entry" type="object" string="Confirmar e Gerar OP" class="oe_highlight" invisible="state != 'draft'"/>
-                    <button name="action_view_production" type="object" string="Ver Ordem de Produção" class="oe_highlight" invisible="not mrp_production_id"/>
-                    <button name="action_cancel_entry" type="object" string="Cancelar" invisible="state in ('done', 'cancelled')"/>
-                    <button name="action_finish_entry" type="object" string="Concluir Reparo" class="oe_highlight" invisible="mrp_production_id.state != 'done'"/>
+                    <button name="action_confirm_entry" 
+                            type="object" 
+                            string="Confirmar e Gerar OP" 
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_view_production" 
+                            type="object" 
+                            string="Ver Ordem de Produção" 
+                            class="oe_highlight"
+                            attrs="{'invisible': [('mrp_production_id', '=', False)]}"/>
+                    <button name="action_cancel_entry" 
+                            type="object" 
+                            string="Cancelar"
+                            attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
+                    <button name="action_finish_entry" 
+                            type="object" 
+                            string="Concluir Reparo" 
+                            class="oe_highlight"
+                            attrs="{'invisible': [('mrp_production_id.state', '!=', 'done')]}"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,in_progress,done"/>
                 </header>
                 <sheet>
@@ -73,7 +88,10 @@
                 <field name="arrival_date"/>
                 <field name="current_workcenter_id"/>
                 <field name="current_operation"/>
-                <field name="state"/>
+                <field name="state" decoration-info="state == 'draft'" 
+                         decoration-success="state == 'done'"
+                         decoration-warning="state == 'confirmed'"
+                         decoration-danger="state == 'cancelled'"/>
             </tree>
         </field>
     </record>
@@ -106,11 +124,4 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Registre a entrada de um cilindro para reparo</p>
             <p>O sistema criará automaticamente uma Ordem de Produção para controle no chão de fábrica.</p>
-        </field>
-    </record>
-
-    <!-- MENU -->
-    <menuitem id="menu_repair_entry_root" name="Reparos de Cilindros" parent="mrp.menu_mrp_root" sequence="10"/>
-    <menuitem id="menu_equipment_entry" name="Entrada de Equipamentos" parent="menu_repair_entry_root" action="action_equipment_entry" sequence="10"/>
-    <menuitem id="menu_repair_orders_linked" name="Ordens de Reparo" parent="menu_repair_entry_root" action="mrp_production_type.action_mrp_production_repair" sequence="20"/>
-</odoo>
+       
