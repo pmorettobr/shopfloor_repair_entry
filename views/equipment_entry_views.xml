@@ -124,4 +124,11 @@
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Registre a entrada de um cilindro para reparo</p>
             <p>O sistema criará automaticamente uma Ordem de Produção para controle no chão de fábrica.</p>
-       
+        </field>
+    </record>
+
+    <!-- MENU -->
+    <menuitem id="menu_repair_entry_root" name="Reparos de Cilindros" parent="mrp.menu_mrp_root" sequence="10"/>
+    <menuitem id="menu_equipment_entry" name="Entrada de Equipamentos" parent="menu_repair_entry_root" action="action_equipment_entry" sequence="10"/>
+    <menuitem id="menu_repair_orders_linked" name="Ordens de Reparo" parent="menu_repair_entry_root" action="mrp_production_type.action_mrp_production_repair" sequence="20"/>
+</odoo>
