@@ -7,7 +7,7 @@ class EquipmentEntry(models.Model):
     _description = 'Entrada de Equipamento para Reparo'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
-    _rec_name = 'name'  # ✅ Define qual campo será usado como nome de exibição
+    _rec_name = 'name'
 
     # ========== CAMPO NAME (para breadcrumb) ==========
     name = fields.Char(
@@ -17,16 +17,18 @@ class EquipmentEntry(models.Model):
         readonly=True
     )
 
-    @api.depends('equipment_name', 'serial_number', 'id')
+    @api.depends('equipment_name', 'serial_number')  # ✅ SEM 'id'
     def _compute_name(self):
         """Gera um nome amigável para o registro"""
         for entry in self:
-            if entry.serial_number:
+            if entry.serial_number and entry.equipment_name:
                 entry.name = f"{entry.equipment_name} - {entry.serial_number}"
             elif entry.equipment_name:
-                entry.name = f"{entry.equipment_name} (ID: {entry.id})"
+                entry.name = entry.equipment_name
+            elif entry.serial_number:
+                entry.name = f"Entrada - {entry.serial_number}"
             else:
-                entry.name = f"Entrada #{entry.id}"
+                entry.name = "Nova Entrada"
 
     # ========== DADOS DO CLIENTE ==========
     partner_id = fields.Many2one('res.partner', string='Cliente', required=True, tracking=True)
@@ -65,7 +67,6 @@ class EquipmentEntry(models.Model):
         default=lambda self: self.env['repair.standard.route'].search([('active', '=', True)], limit=1)
     )
     
-    # ========== ROTEIRO COPIADO ==========
     operations_note = fields.Text(string='Operações do Reparo', readonly=True)
 
     def action_confirm_entry(self):
@@ -79,7 +80,7 @@ class EquipmentEntry(models.Model):
                 'product_id': entry._get_or_create_repair_product().id,
                 'product_qty': 1,
                 'product_uom_id': entry._get_or_create_repair_product().uom_id.id,
-                'origin': f'Entrada: {entry.name}',  # ✅ Usa o nome amigável
+                'origin': f'Entrada: {entry.name}',
                 'production_type': 'repair',
                 'equipment_entry_id': entry.id,
             }
