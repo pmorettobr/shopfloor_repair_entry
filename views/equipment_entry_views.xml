@@ -27,6 +27,7 @@
                     <h1>
                         <field name="equipment_name" placeholder="Nome do Equipamento"/>
                     </h1>
+                    <field name="name" invisible="1"/>  <!-- ✅ Campo name invisível mas ativo -->
                     <group>
                         <group string="Dados do Cliente">
                             <field name="partner_id"/>
