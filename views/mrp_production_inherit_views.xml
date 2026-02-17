@@ -13,6 +13,11 @@
                     <field name="equipment_entry_id"/>
                     <field name="partner_id" readonly="1"/>
                 </group>
+                <!-- Community: Rastreio Manual -->
+                <group name="shopfloor_tracking" string="Rastreio Chão de Fábrica">
+                    <field name="current_workcenter_id"/>
+                    <field name="current_operation"/>
+                </group>
             </xpath>
         </field>
     </record>
