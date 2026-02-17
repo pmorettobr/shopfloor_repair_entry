@@ -1,111 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- FORMULÁRIO -->
-    <record id="view_equipment_entry_form" model="ir.ui.view">
-        <field name="name">equipment.entry.form</field>
-        <field name="model">equipment.entry</field>
+    <!-- Herança do Formulário de OP -->
+    <record id="view_mrp_production_form_inherit_entry" model="ir.ui.view">
+        <field name="name">mrp.production.form.inherit.entry</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
-            <form string="Entrada de Equipamento">
-                <header>
-                    <button name="action_confirm_entry" type="object" string="Confirmar e Gerar OP" class="oe_highlight" invisible="state != 'draft'"/>
-                    <button name="action_view_production" type="object" string="Ver Ordem de Produção" class="oe_highlight" invisible="not mrp_production_id"/>
-                    <button name="action_cancel_entry" type="object" string="Cancelar" invisible="state in ('done', 'cancelled')"/>
-                    <button name="action_finish_entry" type="object" string="Concluir Reparo" class="oe_highlight" invisible="mrp_production_id.state != 'done'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,in_progress,done"/>
-                </header>
-                <sheet>
-                    <h1>
-                        <field name="equipment_name" placeholder="Nome do Equipamento"/>
-                    </h1>
-                    <group>
-                        <group string="Dados do Cliente">
-                            <field name="partner_id"/>
-                            <field name="arrival_date"/>
-                        </group>
-                        <group string="Dados do Cilindro">
-                            <field name="serial_number"/>
-                            <field name="equipment_model"/>
-                            <field name="dimensions"/>
-                        </group>
-                    </group>
-                    <group string="Checklist de Recebimento">
-                        <group>
-                            <field name="arrival_state"/>
-                            <field name="current_workcenter_id" readonly="1"/>
-                            <field name="current_operation" readonly="1"/>
-                        </group>
-                        <group>
-                            <field name="damage_description" placeholder="Descreva as avarias..."/>
-                            <field name="accessories" placeholder="Acessórios incluídos..."/>
-                        </group>
-                    </group>
-                    <group string="Roteiro de Operações">
-                        <field name="standard_route_id"/>
-                    </group>
-                    <group string="Fotos">
-                        <field name="photos" widget="many2many_binary"/>
-                    </group>
-                </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
-                </div>
-            </form>
-        </field>
-    </record>
-
-    <!-- LISTA -->
-    <record id="view_equipment_entry_tree" model="ir.ui.view">
-        <field name="name">equipment.entry.tree</field>
-        <field name="model">equipment.entry</field>
-        <field name="arch" type="xml">
-            <tree string="Entradas de Equipamento">
-                <field name="id"/>
-                <field name="partner_id"/>
-                <field name="equipment_name"/>
-                <field name="serial_number"/>
-                <field name="arrival_date"/>
-                <field name="current_workcenter_id"/>
-                <field name="current_operation"/>
-                <field name="state"/>
-            </tree>
-        </field>
-    </record>
-
-    <!-- BUSCA -->
-    <record id="view_equipment_entry_search" model="ir.ui.view">
-        <field name="name">equipment.entry.search</field>
-        <field name="model">equipment.entry</field>
-        <field name="arch" type="xml">
-            <search string="Buscar Entradas">
-                <field name="partner_id"/>
-                <field name="serial_number"/>
-                <field name="equipment_name"/>
-                <filter string="Em Andamento" name="filter_in_progress" domain="[('state', '=', 'confirmed')]"/>
-                <filter string="Concluídos" name="filter_done" domain="[('state', '=', 'done')]"/>
-                <group string="Agrupar por">
-                    <filter string="Cliente" name="group_partner" context="{'group_by': 'partner_id'}"/>
-                    <filter string="Máquina Atual" name="group_workcenter" context="{'group_by': 'current_workcenter_id'}"/>
-                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+            
+            <!-- Adiciona campo de vínculo após o campo origin (no header da OP) -->
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="equipment_entry_id" invisible="1"/>
+            </xpath>
+            
+            <!-- Adiciona grupo de informações do equipamento no sheet -->
+            <xpath expr="//sheet" position="inside">
+                <group name="equipment_info" string="Equipamento de Cliente" invisible="not equipment_entry_id">
+                    <field name="equipment_entry_id" readonly="1"/>
+                    <field name="partner_id" readonly="1"/>
                 </group>
-            </search>
+                
+                <!-- Community: Rastreio Manual -->
+                <group name="shopfloor_tracking" string="Rastreio Chão de Fábrica">
+                    <field name="current_workcenter_id"/>
+                    <field name="current_operation"/>
+                </group>
+            </xpath>
+            
         </field>
     </record>
-
-    <!-- AÇÃO -->
-    <record id="action_equipment_entry" model="ir.actions.act_window">
-        <field name="name">Entrada de Equipamentos</field>
-        <field name="res_model">equipment.entry</field>
-        <field name="view_mode">tree,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">Registre a entrada de um cilindro para reparo</p>
-            <p>O sistema criará automaticamente uma Ordem de Produção para controle no chão de fábrica.</p>
-        </field>
-    </record>
-
-    <!-- MENU -->
-    <menuitem id="menu_repair_entry_root" name="Reparos de Cilindros" parent="mrp.menu_mrp_root" sequence="10"/>
-    <menuitem id="menu_equipment_entry" name="Entrada de Equipamentos" parent="menu_repair_entry_root" action="action_equipment_entry" sequence="10"/>
-    <menuitem id="menu_repair_orders_linked" name="Ordens de Reparo" parent="menu_repair_entry_root" action="mrp_production_type.action_mrp_production_repair" sequence="20"/>
 </odoo>
