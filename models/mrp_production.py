@@ -9,8 +9,7 @@ class MrpProduction(models.Model):
         string='Entrada de Equipamento', 
         copy=False, 
         readonly=True
-    )
-    
+    )    
     # Community: Campos para rastreio manual
     current_workcenter_id = fields.Many2one(
         'mrp.workcenter', 
