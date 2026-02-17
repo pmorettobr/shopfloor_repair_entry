@@ -34,16 +34,9 @@ class EquipmentEntry(models.Model):
         string='Status', default='draft', tracking=True
     )
     
-    # ========== CAMPOS DE RASTREIO (Community) ==========
-    current_workcenter_id = fields.Many2one(
-        'mrp.workcenter', 
-        string='Máquina Atual', 
-        help='Última máquina registrada nesta OP'
-    )
-    current_operation = fields.Char(
-        string='Operação Atual',
-        help='Última operação registrada'
-    )
+    # ========== CAMPOS DE RASTREIO ==========
+    current_workcenter_id = fields.Many2one('mrp.workcenter', string='Máquina Atual')
+    current_operation = fields.Char(string='Operação Atual')
     
     # ========== ROTEIRO ==========
     standard_route_id = fields.Many2one(
@@ -61,15 +54,15 @@ class EquipmentEntry(models.Model):
             if entry.mrp_production_id:
                 raise UserError(_('Já existe uma Ordem de Produção vinculada a esta entrada.'))
             
+            # Cria a OP de Reparo
             production_vals = {
                 'product_id': entry._get_or_create_repair_product().id,
                 'product_qty': 1,
                 'product_uom_id': entry._get_or_create_repair_product().uom_id.id,
                 'origin': f'Entrada: {entry.id}',
-                'production_type': 'repair',
+                'production_type': 'repair',  # Módulo 2
                 'equipment_entry_id': entry.id,
-                'partner_id': entry.partner_id.id,
-                # Community: Adiciona as operações no campo note
+                # 'partner_id': entry.partner_id.id,  # ❌ REMOVIDO - Não existe no Community
                 'note': entry._build_operations_note(),
             }
             
