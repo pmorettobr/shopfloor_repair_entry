@@ -21,11 +21,6 @@
                             type="object" 
                             string="Cancelar"
                             attrs="{'invisible': [('state', 'in', ['done', 'cancelled'])]}"/>
-                    <button name="action_finish_entry" 
-                            type="object" 
-                            string="Concluir Reparo" 
-                            class="oe_highlight"
-                            attrs="{'invisible': [('mrp_production_id.state', '!=', 'done')]}"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,in_progress,done"/>
                 </header>
                 <sheet>
