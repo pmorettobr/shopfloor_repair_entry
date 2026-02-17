@@ -111,7 +111,7 @@
         </field>
     </record>
 
-    <!-- AÇÃO -->
+    <!-- AÇÃO: Entrada de Equipamentos -->
     <record id="action_equipment_entry" model="ir.actions.act_window">
         <field name="name">Entrada de Equipamentos</field>
         <field name="res_model">equipment.entry</field>
@@ -122,8 +122,40 @@
         </field>
     </record>
 
-    <!-- MENU -->
-    <menuitem id="menu_repair_entry_root" name="Reparos de Cilindros" parent="mrp.menu_mrp_root" sequence="10"/>
-    <menuitem id="menu_equipment_entry" name="Entrada de Equipamentos" parent="menu_repair_entry_root" action="action_equipment_entry" sequence="10"/>
-    <menuitem id="menu_repair_orders_linked" name="Ordens de Reparo" parent="menu_repair_entry_root" action="mrp_production_type.action_mrp_production_repair" sequence="20"/>
+    <!-- ========== AÇÃO: ORDENS DE REPARO (NOVO) ========== -->
+    <record id="action_repair_orders" model="ir.actions.act_window">
+        <field name="name">Ordens de Reparo</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('production_type', '=', 'repair')]</field>
+        <field name="context">{'default_production_type': 'repair'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Nenhuma ordem de reparo encontrada
+            </p>
+            <p>
+                As ordens de reparo são criadas automaticamente ao confirmar uma Entrada de Equipamento.
+            </p>
+        </field>
+    </record>
+
+    <!-- MENU RAIZ -->
+    <menuitem id="menu_repair_entry_root" 
+              name="Reparos de Cilindros" 
+              parent="mrp.menu_mrp_root" 
+              sequence="10"/>
+    
+    <!-- MENU: Entrada de Equipamentos -->
+    <menuitem id="menu_equipment_entry" 
+              name="Entrada de Equipamentos" 
+              parent="menu_repair_entry_root" 
+              action="action_equipment_entry" 
+              sequence="10"/>
+    
+    <!-- MENU: Ordens de Reparo (NOVO) -->
+    <menuitem id="menu_repair_orders" 
+              name="Ordens de Reparo" 
+              parent="menu_repair_entry_root" 
+              action="action_repair_orders" 
+              sequence="20"/>
 </odoo>
