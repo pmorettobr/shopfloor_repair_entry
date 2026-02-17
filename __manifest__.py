@@ -5,21 +5,20 @@
     'category': 'Manufacturing',
     'summary': 'Entrada de cilindros de clientes e geração automática de OP de reparo',
     'description': """
-        Fluxo simplificado para chão de fábrica:
+        Fluxo simplificado para chão de fábrica (Community Edition):
         - Registro de entrada de equipamentos de clientes
         - Checklist de recebimento (estado, avarias, acessórios)
         - Geração automática de OP com Tipo = Reparo
-        - Roteiro Padrão de Operações (copiado automaticamente)
-        - Flexibilidade para editar operações por cilindro
+        - Roteiro Padrão de Operações (como registro)
         - Rastreabilidade completa por número de série
+        - COMPATÍVEL COM ODOO 16 COMMUNITY
     """,
     'author': 'Paulo Moretto',
     'license': 'LGPL-3',
     'depends': [
-        'mrp',
-        'mrp_workorder',
-        'mrp_production_type',
-        'stock',
+        'mrp',              # ✅ Community
+        'mrp_production_type',  # ✅ Seu módulo 2
+        'stock',            # ✅ Community
     ],
     'data': [
         'security/ir.model.access.csv',
