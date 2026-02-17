@@ -34,9 +34,16 @@ class EquipmentEntry(models.Model):
         string='Status', default='draft', tracking=True
     )
     
-    # ========== CAMPOS DE RASTREIO ==========
-    current_workcenter_id = fields.Many2one('mrp.workcenter', string='Máquina Atual', compute='_compute_current_workcenter', store=True)
-    current_operation = fields.Char(string='Operação Atual', compute='_compute_current_operation', store=True)
+    # ========== CAMPOS DE RASTREIO (Community) ==========
+    current_workcenter_id = fields.Many2one(
+        'mrp.workcenter', 
+        string='Máquina Atual', 
+        help='Última máquina registrada nesta OP'
+    )
+    current_operation = fields.Char(
+        string='Operação Atual',
+        help='Última operação registrada'
+    )
     
     # ========== ROTEIRO ==========
     standard_route_id = fields.Many2one(
@@ -44,24 +51,6 @@ class EquipmentEntry(models.Model):
         string='Roteiro Padrão',
         default=lambda self: self.env['repair.standard.route'].search([('active', '=', True)], limit=1)
     )
-
-    @api.depends('mrp_production_id', 'mrp_production_id.workorder_ids', 'mrp_production_id.workorder_ids.state', 'mrp_production_id.workorder_ids.workcenter_id')
-    def _compute_current_workcenter(self):
-        for entry in self:
-            entry.current_workcenter_id = False
-            if entry.mrp_production_id and entry.mrp_production_id.workorder_ids:
-                active_wo = entry.mrp_production_id.workorder_ids.filtered(lambda wo: wo.state in ('progress', 'ready'))[:1]
-                if active_wo:
-                    entry.current_workcenter_id = active_wo.workcenter_id.id
-    
-    @api.depends('mrp_production_id', 'mrp_production_id.workorder_ids', 'mrp_production_id.workorder_ids.state', 'mrp_production_id.workorder_ids.name')
-    def _compute_current_operation(self):
-        for entry in self:
-            entry.current_operation = False
-            if entry.mrp_production_id and entry.mrp_production_id.workorder_ids:
-                active_wo = entry.mrp_production_id.workorder_ids.filtered(lambda wo: wo.state in ('progress', 'ready'))[:1]
-                if active_wo:
-                    entry.current_operation = active_wo.name
 
     def action_confirm_entry(self):
         """Confirma a entrada e gera a OP de reparo automaticamente"""
@@ -80,13 +69,11 @@ class EquipmentEntry(models.Model):
                 'production_type': 'repair',
                 'equipment_entry_id': entry.id,
                 'partner_id': entry.partner_id.id,
+                # Community: Adiciona as operações no campo note
+                'note': entry._build_operations_note(),
             }
             
             production = self.env['mrp.production'].create(production_vals)
-            
-            # COPIA AS OPERAÇÕES DO ROTEIRO PADRÃO
-            if entry.standard_route_id and entry.standard_route_id.operation_ids:
-                entry._copy_standard_operations_to_production(production)
             
             entry.write({
                 'mrp_production_id': production.id,
@@ -95,18 +82,22 @@ class EquipmentEntry(models.Model):
         
         return True
 
-    def _copy_standard_operations_to_production(self, production):
-        """Copia as operações do roteiro padrão para a OP"""
+    def _build_operations_note(self):
+        """Cria uma nota com as operações do roteiro (Community)"""
         self.ensure_one()
-        for std_op in self.standard_route_id.operation_ids.sorted('sequence'):
-            self.env['mrp.workorder'].create({
-                'production_id': production.id,
-                'name': std_op.name,
-                'workcenter_id': std_op.workcenter_id.id,
-                'sequence': std_op.sequence,
-                'time_cycle': std_op.time_cycle,
-                'note': std_op.note,
-            })
+        if not self.standard_route_id or not self.standard_route_id.operation_ids:
+            return ''
+        
+        note = "=== ROTEIRO DE OPERAÇÕES ===\n\n"
+        for op in self.standard_route_id.operation_ids.sorted('sequence'):
+            note += f"▸ {op.name}\n"
+            note += f"  Máquina: {op.workcenter_id.name}\n"
+            note += f"  Tempo estimado: {op.time_cycle}h\n"
+            if op.note:
+                note += f"  Obs: {op.note}\n"
+            note += "\n"
+        
+        return note
 
     def action_view_production(self):
         self.ensure_one()
