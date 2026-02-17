@@ -7,6 +7,26 @@ class EquipmentEntry(models.Model):
     _description = 'Entrada de Equipamento para Reparo'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
+    _rec_name = 'name'  # ✅ Define qual campo será usado como nome de exibição
+
+    # ========== CAMPO NAME (para breadcrumb) ==========
+    name = fields.Char(
+        string='Número de Referência',
+        compute='_compute_name',
+        store=True,
+        readonly=True
+    )
+
+    @api.depends('equipment_name', 'serial_number', 'id')
+    def _compute_name(self):
+        """Gera um nome amigável para o registro"""
+        for entry in self:
+            if entry.serial_number:
+                entry.name = f"{entry.equipment_name} - {entry.serial_number}"
+            elif entry.equipment_name:
+                entry.name = f"{entry.equipment_name} (ID: {entry.id})"
+            else:
+                entry.name = f"Entrada #{entry.id}"
 
     # ========== DADOS DO CLIENTE ==========
     partner_id = fields.Many2one('res.partner', string='Cliente', required=True, tracking=True)
@@ -45,50 +65,36 @@ class EquipmentEntry(models.Model):
         default=lambda self: self.env['repair.standard.route'].search([('active', '=', True)], limit=1)
     )
     
-    # ========== ROTEIRO COPIADO (para consulta) ==========
+    # ========== ROTEIRO COPIADO ==========
     operations_note = fields.Text(string='Operações do Reparo', readonly=True)
 
     def action_confirm_entry(self):
-        """Confirma a entrada e gera a OP de reparo automaticamente"""
         for entry in self:
             if entry.state != 'draft':
                 continue
-            
             if entry.mrp_production_id:
                 raise UserError(_('Já existe uma Ordem de Produção vinculada a esta entrada.'))
-            
-            # Gera o texto das operações para armazenar na entrada
             operations_text = entry._build_operations_note()
-            
-            # Cria a OP de Reparo - APENAS CAMPOS NATIVOS DO COMMUNITY
             production_vals = {
                 'product_id': entry._get_or_create_repair_product().id,
                 'product_qty': 1,
                 'product_uom_id': entry._get_or_create_repair_product().uom_id.id,
-                'origin': f'Entrada: {entry.id}',
-                'production_type': 'repair',  # Módulo 2
+                'origin': f'Entrada: {entry.name}',  # ✅ Usa o nome amigável
+                'production_type': 'repair',
                 'equipment_entry_id': entry.id,
-                # ❌ REMOVIDO: partner_id (não existe no Community)
-                # ❌ REMOVIDO: note (não existe no Community)
             }
-            
             production = self.env['mrp.production'].create(production_vals)
-            
-            # Atualiza a entrada com o vínculo e o roteiro
             entry.write({
                 'mrp_production_id': production.id,
                 'state': 'confirmed',
                 'operations_note': operations_text,
             })
-        
         return True
 
     def _build_operations_note(self):
-        """Cria uma nota com as operações do roteiro"""
         self.ensure_one()
         if not self.standard_route_id or not self.standard_route_id.operation_ids:
             return ''
-        
         note = "=== ROTEIRO DE OPERAÇÕES ===\n\n"
         for op in self.standard_route_id.operation_ids.sorted('sequence'):
             note += f"▸ {op.name}\n"
@@ -97,7 +103,6 @@ class EquipmentEntry(models.Model):
             if op.note:
                 note += f"  Obs: {op.note}\n"
             note += "\n"
-        
         return note
 
     def action_view_production(self):
