@@ -13,7 +13,7 @@
         - Flexibilidade para editar operações por cilindro
         - Rastreabilidade completa por número de série
     """,
-    'author': 'Sua Empresa',
+    'author': 'Paulo Moretto',
     'license': 'LGPL-3',
     'depends': [
         'mrp',
