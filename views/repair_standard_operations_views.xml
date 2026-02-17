@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Formulário do Roteiro Padrão -->
+    <record id="view_repair_standard_route_form" model="ir.ui.view">
+        <field name="name">repair.standard.route.form</field>
+        <field name="model">repair.standard.route</field>
+        <field name="arch" type="xml">
+            <form string="Roteiro Padrão de Reparo">
+                <header>
+                    <button name="action_load_default_operations" type="object" string="Carregar Operações Padrão" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Operações">
+                        <field name="operation_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="workcenter_id"/>
+                                <field name="time_cycle"/>
+                                <field name="note"/>
+                                <field name="active" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Lista de Roteiros -->
+    <record id="view_repair_standard_route_tree" model="ir.ui.view">
+        <field name="name">repair.standard.route.tree</field>
+        <field name="model">repair.standard.route</field>
+        <field name="arch" type="xml">
+            <tree string="Roteiros Padrão de Reparo">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Ação e Menu -->
+    <record id="action_repair_standard_route" model="ir.actions.act_window">
+        <field name="name">Roteiros Padrão de Reparo</field>
+        <field name="res_model">repair.standard.route</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_repair_config" name="Reparos" parent="mrp.menu_mrp_configuration" sequence="10"/>
+    <menuitem id="menu_repair_standard_route" name="Roteiros Padrão" parent="menu_repair_config" action="action_repair_standard_route" sequence="10"/>
+</odoo>

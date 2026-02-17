@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_equipment_entry_user,equipment.entry.user,model_equipment_entry,mrp.group_mrp_user,1,1,1,0
+access_equipment_entry_manager,equipment.entry.manager,model_equipment_entry,mrp.group_mrp_manager,1,1,1,1
+access_repair_standard_operation_user,repair.standard.operation.user,model_repair_standard_operation,mrp.group_mrp_user,1,1,1,0
+access_repair_standard_operation_manager,repair.standard.operation.manager,model_repair_standard_operation,mrp.group_mrp_manager,1,1,1,1
+access_repair_standard_route_user,repair.standard.route.user,model_repair_standard_route,mrp.group_mrp_user,1,1,1,0
+access_repair_standard_route_manager,repair.standard.route.manager,model_repair_standard_route,mrp.group_mrp_manager,1,1,1,1

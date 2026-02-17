@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="repair_standard_route_default" model="repair.standard.route">
+        <field name="name">Roteiro Padrão - Cilindros Hidráulicos</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="mrp_workcenter_disassembly" model="mrp.workcenter">
+        <field name="name">Bancada de Desmontagem</field>
+        <field name="code">DESMONT</field>
+        <field name="time_efficiency">100</field>
+    </record>
+    
+    <record id="mrp_workcenter_cleaning" model="mrp.workcenter">
+        <field name="name">Limpeza e Inspeção</field>
+        <field name="code">LIMPEZA</field>
+        <field name="time_efficiency">100</field>
+    </record>
+    
+    <record id="mrp_workcenter_machining" model="mrp.workcenter">
+        <field name="name">Usinagem (Tornos)</field>
+        <field name="code">USINAGEM</field>
+        <field name="time_efficiency">100</field>
+    </record>
+    
+    <record id="mrp_workcenter_welding" model="mrp.workcenter">
+        <field name="name">Solda</field>
+        <field name="code">SOLDA</field>
+        <field name="time_efficiency">100</field>
+    </record>
+    
+    <record id="mrp_workcenter_polishing" model="mrp.workcenter">
+        <field name="name">Polimento</field>
+        <field name="code">POLIM</field>
+        <field name="time_efficiency">100</field>
+    </record>
+    
+    <record id="mrp_workcenter_assembly" model="mrp.workcenter">
+        <field name="name">Montagem</field>
+        <field name="code">MONTAGEM</field>
+        <field name="time_efficiency">100</field>
+    </record>
+    
+    <record id="mrp_workcenter_testing" model="mrp.workcenter">
+        <field name="name">Teste de Pressão</field>
+        <field name="code">TESTE</field>
+        <field name="time_efficiency">100</field>
+    </record>
+
+    <record id="std_op_disassembly" model="repair.standard.operation">
+        <field name="route_id" ref="repair_standard_route_default"/>
+        <field name="name">Desmontagem</field>
+        <field name="sequence">10</field>
+        <field name="workcenter_id" ref="mrp_workcenter_disassembly"/>
+        <field name="time_cycle">2.0</field>
+        <field name="note">Remover todos os componentes e identificar peças</field>
+    </record>
+    
+    <record id="std_op_cleaning" model="repair.standard.operation">
+        <field name="route_id" ref="repair_standard_route_default"/>
+        <field name="name">Limpeza e Inspeção</field>
+        <field name="sequence">20</field>
+        <field name="workcenter_id" ref="mrp_workcenter_cleaning"/>
+        <field name="time_cycle">1.0</field>
+        <field name="note">Limpar peças e inspecionar danos</field>
+    </record>
+    
+    <record id="std_op_machining" model="repair.standard.operation">
+        <field name="route_id" ref="repair_standard_route_default"/>
+        <field name="name">Usinagem</field>
+        <field name="sequence">30</field>
+        <field name="workcenter_id" ref="mrp_workcenter_machining"/>
+        <field name="time_cycle">4.0</field>
+        <field name="note">Recuperar medidas originais</field>
+    </record>
+    
+    <record id="std_op_welding" model="repair.standard.operation">
+        <field name="route_id" ref="repair_standard_route_default"/>
+        <field name="name">Solda</field>
+        <field name="sequence">40</field>
+        <field name="workcenter_id" ref="mrp_workcenter_welding"/>
+        <field name="time_cycle">3.0</field>
+        <field name="note">Reparar trincas ou soldar componentes</field>
+    </record>
+    
+    <record id="std_op_polishing" model="repair.standard.operation">
+        <field name="route_id" ref="repair_standard_route_default"/>
+        <field name="name">Polimento</field>
+        <field name="sequence">50</field>
+        <field name="workcenter_id" ref="mrp_workcenter_polishing"/>
+        <field name="time_cycle">2.0</field>
+        <field name="note">Acabamento superficial das hastes</field>
+    </record>
+    
+    <record id="std_op_assembly" model="repair.standard.operation">
+        <field name="route_id" ref="repair_standard_route_default"/>
+        <field name="name">Montagem</field>
+        <field name="sequence">60</field>
+        <field name="workcenter_id" ref="mrp_workcenter_assembly"/>
+        <field name="time_cycle">2.0</field>
+        <field name="note">Montar cilindro com novos vedadores</field>
+    </record>
+    
+    <record id="std_op_testing" model="repair.standard.operation">
+        <field name="route_id" ref="repair_standard_route_default"/>
+        <field name="name">Teste de Pressão</field>
+        <field name="sequence">70</field>
+        <field name="workcenter_id" ref="mrp_workcenter_testing"/>
+        <field name="time_cycle">1.0</field>
+        <field name="note">Testar sob pressão conforme especificação</field>
+    </record>
+</odoo>
