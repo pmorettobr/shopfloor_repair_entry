@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Shopfloor Repair Entry - Entrada de Equipamentos',
-    'version': '16.0.1.0.0',
+    'version': '16.0.2.0.0',
     'category': 'Manufacturing',
     'summary': 'Entrada de cilindros de clientes e geração automática de OP de reparo',
     'description': """
