@@ -25,11 +25,6 @@
         'views/equipment_entry_views.xml',
         # 'views/mrp_production_inherit_views.xml',  # REMOVIDO TEMPORARIAMENTE
     ],
-    'assets': {
-        'web.assets_backend': [
-            'shopfloor_repair_entry/static/src/css/repair_styles.css',
-        ],
-    },
     'installable': True,
     'application': False,
     'auto_install': False,
