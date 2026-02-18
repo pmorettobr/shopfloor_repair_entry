@@ -1,1 +1,39 @@
+/* Forçar expansão do campo One2many de Operações */
+.o_form_view .o_field_widget[name="operation_ids"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 800px !important;
+}
 
+.o_form_view .o_field_widget[name="operation_ids"] .o_list_view {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.o_form_view .o_field_widget[name="operation_ids"] .o_list_table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    min-width: 800px !important;
+}
+
+.o_form_view .o_field_widget[name="operation_ids"] .o_list_table th,
+.o_form_view .o_field_widget[name="operation_ids"] .o_list_table td {
+    min-width: 100px !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+/* Expande o notebook */
+.o_form_view .o_notebook {
+    width: 100% !important;
+}
+
+.o_form_view .o_notebook .o_notebook_page {
+    width: 100% !important;
+    min-width: 800px !important;
+}
+
+/* Sheet com largura total */
+.o_form_view .o_sheet {
+    max-width: 100% !important;
+}
