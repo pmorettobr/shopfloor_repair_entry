@@ -7,25 +7,36 @@
         <field name="arch" type="xml">
             <form string="Roteiro Padrão de Reparo">
                 <header>
-                    <button name="action_load_default_operations" type="object" string="Carregar Operações Padrão" class="oe_highlight"/>
+                    <button name="action_load_default_operations" 
+                            type="object" 
+                            string="Carregar Operações Padrão" 
+                            class="oe_highlight"/>
                 </header>
                 <sheet>
                     <group>
-                        <field name="name"/>
-                        <field name="active"/>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
                     </group>
-                    <group string="Operações">
-                        <field name="operation_ids" nolabel="1">
-                            <tree editable="bottom">
-                                <field name="sequence" widget="handle"/>
-                                <field name="name"/>
-                                <field name="workcenter_id"/>
-                                <field name="time_cycle"/>
-                                <field name="note"/>
-                                <field name="active" invisible="1"/>
-                            </tree>
-                        </field>
-                    </group>
+                    
+                    <!-- Notebook para melhor organização -->
+                    <notebook>
+                        <page string="Operações" name="operations">
+                            <field name="operation_ids" nolabel="1" colspan="2">
+                                <tree editable="bottom" decoration-muted="not active">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name" required="1"/>
+                                    <field name="workcenter_id" required="1"/>
+                                    <field name="time_cycle"/>
+                                    <field name="note"/>
+                                    <field name="active" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -50,6 +61,14 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_repair_config" name="Reparos" parent="mrp.menu_mrp_configuration" sequence="10"/>
-    <menuitem id="menu_repair_standard_route" name="Roteiros Padrão" parent="menu_repair_config" action="action_repair_standard_route" sequence="10"/>
+    <menuitem id="menu_repair_config" 
+              name="Reparos" 
+              parent="mrp.menu_mrp_configuration" 
+              sequence="10"/>
+    
+    <menuitem id="menu_repair_standard_route" 
+              name="Roteiros Padrão" 
+              parent="menu_repair_config" 
+              action="action_repair_standard_route" 
+              sequence="10"/>
 </odoo>
