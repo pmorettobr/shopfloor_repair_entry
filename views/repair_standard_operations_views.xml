@@ -5,7 +5,7 @@
         <field name="name">repair.standard.route.form</field>
         <field name="model">repair.standard.route</field>
         <field name="arch" type="xml">
-            <form string="Roteiro Padrão de Reparo">
+            <form string="Roteiro Padrão de Reparo" create="true" edit="true">
                 <header>
                     <button name="action_load_default_operations" 
                             type="object" 
@@ -13,30 +13,34 @@
                             class="oe_highlight"/>
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Nome do Roteiro"/>
+                        </h1>
+                    </div>
+                    
                     <group>
-                        <group>
-                            <field name="name"/>
-                        </group>
-                        <group>
-                            <field name="active"/>
-                        </group>
+                        <field name="active"/>
                     </group>
                     
-                    <!-- Notebook para melhor organização -->
-                    <notebook>
-                        <page string="Operações" name="operations">
-                            <field name="operation_ids" nolabel="1" colspan="2">
-                                <tree editable="bottom" decoration-muted="not active">
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="name" required="1"/>
-                                    <field name="workcenter_id" required="1"/>
-                                    <field name="time_cycle"/>
-                                    <field name="note"/>
-                                    <field name="active" invisible="1"/>
-                                </tree>
-                            </field>
-                        </page>
-                    </notebook>
+                    <separator string="Operações" colspan="4"/>
+                    
+                    <!-- Field One2many com expansão máxima -->
+                    <field name="operation_ids" 
+                           nolabel="1" 
+                           colspan="4"
+                           mode="tree"
+                           options="{'no_create_edit': False, 'no_delete': False}">
+                        <tree editable="bottom" create="true" delete="true">
+                            <field name="sequence" widget="handle" optional="hide"/>
+                            <field name="name" required="1"/>
+                            <field name="workcenter_id" required="1" options="{'no_create': True}"/>
+                            <field name="time_cycle"/>
+                            <field name="note"/>
+                            <field name="active" invisible="1"/>
+                        </tree>
+                    </field>
                 </sheet>
             </form>
         </field>
